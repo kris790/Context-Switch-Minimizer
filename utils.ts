@@ -60,34 +60,7 @@ export const generateMockStats = (): SessionStats[] => {
   return stats;
 };
 
-// Storage keys
-const KEY_SESSIONS = 'csm_sessions';
-const KEY_SETTINGS = 'csm_settings';
-const KEY_STATS = 'csm_stats';
-
-export const storage = {
-  getSessions: (): FocusSession[] => {
-    const data = localStorage.getItem(KEY_SESSIONS);
-    return data ? JSON.parse(data) : DEFAULT_SESSIONS;
-  },
-  saveSessions: (sessions: FocusSession[]) => {
-    localStorage.setItem(KEY_SESSIONS, JSON.stringify(sessions));
-  },
-  getSettings: (): UserSettings => {
-    const data = localStorage.getItem(KEY_SETTINGS);
-    return data ? JSON.parse(data) : { isOnboarded: false, isPro: false, name: '', dailyGoal: 240 };
-  },
-  saveSettings: (settings: UserSettings) => {
-    localStorage.setItem(KEY_SETTINGS, JSON.stringify(settings));
-  },
-  getStats: (): SessionStats[] => {
-    const data = localStorage.getItem(KEY_STATS);
-    return data ? JSON.parse(data) : generateMockStats();
-  },
-  saveStats: (stats: SessionStats[]) => {
-    localStorage.setItem(KEY_STATS, JSON.stringify(stats));
-  }
-};
+// Storage logic has moved to store.ts to work with Zustand
 
 export const formatDuration = (seconds: number): string => {
   const h = Math.floor(seconds / 3600);

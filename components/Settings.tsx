@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { User, CreditCard, Bell, Shield, Smartphone, LogOut, Download, FileText } from 'lucide-react';
-import { storage } from '../utils';
+import { useStore } from '../store';
 
 interface SettingsProps {
   settings: UserSettings;
@@ -9,6 +9,8 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({ settings }) => {
   const [isExporting, setIsExporting] = useState(false);
+  const sessions = useStore((state) => state.sessions);
+  const stats = useStore((state) => state.stats);
 
   // Mock handlers for toggles
   const [strictMode, setStrictMode] = useState(false);
@@ -19,8 +21,6 @@ const Settings: React.FC<SettingsProps> = ({ settings }) => {
     
     // Simulate processing time
     setTimeout(() => {
-        const sessions = storage.getSessions();
-        const stats = storage.getStats();
         const exportData = {
             user: settings,
             sessions,

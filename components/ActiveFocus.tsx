@@ -5,7 +5,7 @@ import { StopCircle, AlertTriangle, ArrowRight, CheckCircle2, X, ShieldAlert, Al
 
 interface ActiveFocusProps {
   session: FocusSession;
-  onEndSession: () => void;
+  onEndSession: (duration: number) => void;
 }
 
 const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
@@ -29,19 +29,17 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
   }, []);
 
   const handleEndClick = () => {
-    // If session is less than 5 minutes (300 seconds), show confirmation
     if (duration < 300) {
       setShowEndConfirm(true);
     } else {
-      onEndSession();
+      onEndSession(durationRef.current);
     }
   };
 
   const confirmEnd = () => {
-    onEndSession();
+    onEndSession(durationRef.current);
   };
 
-  // Simulate unexpected distraction for demo purposes
   const triggerDistraction = useCallback(() => {
     const unauthorizedApps = AVAILABLE_APPS.filter(app => !session.allowedAppIds.includes(app.id));
     if (unauthorizedApps.length > 0) {
@@ -65,7 +63,6 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
 
   const allowedAppsList = AVAILABLE_APPS.filter(app => session.allowedAppIds.includes(app.id));
 
-  // Timer formatter for the large display
   const formatTimerLarge = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -83,29 +80,24 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col font-sans animate-fade-in">
-      {/* Ambient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary-50 to-white">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-300/20 rounded-full blur-[120px] animate-pulse-slow"></div>
           <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-300/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden z-10">
         <div className="text-center p-8 max-w-3xl w-full">
-            {/* Session Icon */}
             <div className="mb-8 inline-flex items-center justify-center w-28 h-28 bg-white/80 rounded-[2rem] shadow-float text-7xl border border-white backdrop-blur-md animate-bounce-soft">
                 {session.icon}
             </div>
             
             <h1 className="text-4xl font-bold text-neutral-900 mb-3 tracking-tight">{session.name}</h1>
             
-            {/* Status Badge */}
             <div className="flex items-center justify-center gap-2 text-primary-700 font-semibold mb-16 bg-primary-100/50 px-5 py-2 rounded-full w-fit mx-auto border border-primary-200 shadow-sm backdrop-blur-sm">
                 <div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-ping"></div>
                 <span>Focus Mode Active</span>
             </div>
 
-            {/* Timer */}
             <div className="relative mb-20 group cursor-default">
               <div className="text-[140px] font-mono font-bold text-neutral-900 tracking-tighter leading-none tabular-nums select-none drop-shadow-sm transition-transform group-hover:scale-105 duration-500">
                   {timerDisplay.main}
@@ -113,7 +105,6 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col items-center gap-8">
                 <button 
                     onClick={handleEndClick}
@@ -133,7 +124,6 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
             </div>
         </div>
 
-        {/* Allowed Apps Footer */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
             <div className="glass shadow-float rounded-2xl p-2.5 px-8 flex items-center gap-8 animate-fade-in-up">
                 <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Allowed Workspace</span>
@@ -151,7 +141,6 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
         </div>
       </div>
 
-      {/* End Session Confirmation Modal */}
       {showEndConfirm && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-fade-in">
             <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-all" onClick={() => setShowEndConfirm(false)}></div>
@@ -181,13 +170,10 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
         </div>
       )}
 
-      {/* Gentle Redirect Overlay */}
       {focusState === FocusState.DISTRACTED && distractionApp && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
-            {/* Backdrop with heavy blur */}
             <div className="absolute inset-0 bg-white/70 backdrop-blur-xl transition-all duration-500"></div>
             
-            {/* Overlay Card */}
             <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-12 border border-white/60 animate-zoom-in duration-300 ring-1 ring-black/5">
                 <div className="text-center">
                     <div className="w-28 h-28 bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-[2rem] flex items-center justify-center text-6xl mx-auto mb-8 shadow-inner border border-neutral-200">
