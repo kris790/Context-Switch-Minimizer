@@ -160,7 +160,7 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
             <div className="relative mb-16 group cursor-default">
               {/* Progress Ring for Countdown */}
               {targetDuration && (
-                <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] -rotate-90 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] -rotate-90 pointer-events-none transition-opacity duration-700">
                     <circle cx="190" cy="190" r="180" className="stroke-neutral-100 fill-none" strokeWidth="2" />
                     <circle 
                         cx="190" cy="190" r="180" 
@@ -175,7 +175,7 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
 
               {/* Ends At Label */}
               {targetDuration && !isOvertime && endsAtTime && (
-                <div className="absolute -top-6 left-0 w-full text-center text-primary-400 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                <div className="absolute -top-6 left-0 w-full text-center text-primary-400 text-sm font-bold transition-opacity duration-300">
                    Ends at {endsAtTime}
                 </div>
               )}
