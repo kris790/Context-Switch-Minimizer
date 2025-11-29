@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import Analytics from './components/Analytics';
@@ -9,111 +9,29 @@ import Onboarding from './components/Onboarding';
 import SessionSummary from './components/SessionSummary';
 import PricingModal from './components/PricingModal';
 import ExportModal from './components/ExportModal';
-import { ViewState, FocusSession } from './types';
-import { useStore } from './store';
+import { useAppState } from './hooks/useAppState';
+import { ViewState } from './types';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewState>('dashboard');
-  
-  // Zustand Store
-  const sessions = useStore((state) => state.sessions);
-  const settings = useStore((state) => state.settings);
-  const stats = useStore((state) => state.stats);
-  const updateSettings = useStore((state) => state.updateSettings);
-  const addSession = useStore((state) => state.addSession);
-  const updateSession = useStore((state) => state.updateSession);
-  const deleteSession = useStore((state) => state.deleteSession);
-  const addStat = useStore((state) => state.addStat);
-  const recordSessionUsage = useStore((state) => state.recordSessionUsage);
+  const { state, actions } = useAppState();
 
-  // UI State
-  const [activeSession, setActiveSession] = useState<FocusSession | null>(null);
-  
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [editingSession, setEditingSession] = useState<FocusSession | null>(null);
-  
-  const [completedSessionData, setCompletedSessionData] = useState<{name: string, duration: number} | null>(null);
-  
-  const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
+  if (!state.settings) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleOnboardingComplete = (initialSession: FocusSession) => {
-    addSession(initialSession);
-    updateSettings({ isOnboarded: true });
-  };
-
-  const handleOnboardingSkip = () => {
-    updateSettings({ isOnboarded: true });
-  };
-
-  const handleCreateSession = () => {
-    setEditingSession(null);
-    setIsEditorOpen(true);
-  };
-
-  const handleEditSession = (session: FocusSession) => {
-    setEditingSession(session);
-    setIsEditorOpen(true);
-  };
-
-  const handleSaveSession = (session: FocusSession) => {
-    if (editingSession) {
-      updateSession(session);
-    } else {
-      addSession(session);
-    }
-  };
-
-  const handleStartSession = (session: FocusSession) => {
-    setActiveSession(session);
-  };
-
-  const handleEndSession = (duration: number) => {
-    if (activeSession) {
-      // Update global stats
-      recordSessionUsage(activeSession.id, duration);
-      addStat(duration);
-
-      // Show summary
-      setCompletedSessionData({
-        name: activeSession.name,
-        duration: duration
-      });
-    }
-    setActiveSession(null);
-  };
-
-  const handleExportData = (format: 'json' | 'csv') => {
-    setIsExporting(true);
-    setTimeout(() => {
-        const exportData = {
-            user: settings,
-            sessions,
-            stats,
-            exportDate: new Date().toISOString()
-        };
-
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `context-switch-export-${new Date().toISOString().split('T')[0]}.json`);
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-        
-        setIsExporting(false);
-        setIsExportOpen(false);
-    }, 1500);
-  };
-
-  if (!settings) return null;
-
-  if (!settings.isOnboarded) {
+  // Flow 1: Onboarding
+  if (!state.settings.isOnboarded) {
     return (
       <Onboarding 
-        onComplete={handleOnboardingComplete}
-        onSkip={handleOnboardingSkip}
+        onComplete={actions.completeOnboarding}
+        onSkip={actions.skipOnboarding}
       />
     );
   }
@@ -121,71 +39,69 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen bg-background font-sans text-gray-900">
       <Sidebar 
-        currentView={currentView} 
-        setView={setCurrentView} 
-        isPro={settings.isPro}
-        onUpgradeClick={() => setIsPricingOpen(true)} 
+        currentView={state.currentView}
+        setView={actions.setView}
+        isPro={state.settings.isPro}
+        onUpgradeClick={actions.openPricing}
       />
-      
+
       <main className="flex-1 ml-64 overflow-y-auto">
-        {currentView === 'dashboard' && (
+        {state.currentView === 'dashboard' && (
           <Dashboard 
-            sessions={sessions}
-            onStartSession={handleStartSession}
-            onEditSession={handleEditSession}
-            onDeleteSession={deleteSession}
-            onCreateSession={handleCreateSession}
+            sessions={state.sessions}
+            onStartSession={actions.startSession}
+            onEditSession={actions.editSession}
+            onDeleteSession={actions.deleteSession}
+            onCreateSession={actions.createSession}
           />
         )}
-        {currentView === 'analytics' && (
-          <Analytics stats={stats} />
+        {state.currentView === 'analytics' && (
+          <Analytics stats={state.stats} />
         )}
-        {currentView === 'settings' && (
+        {state.currentView === 'settings' && (
           <Settings 
-            settings={settings}
+            settings={state.settings}
+            onExportClick={actions.openExport}
           />
         )}
       </main>
 
+      {/* Modals & Overlays */}
       <SessionEditor 
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        onSave={handleSaveSession}
-        initialSession={editingSession}
+        isOpen={state.isEditorOpen}
+        onClose={actions.closeEditor}
+        onSave={actions.saveSession}
+        initialSession={state.editingSession}
       />
 
       <PricingModal 
-        isOpen={isPricingOpen}
-        onClose={() => setIsPricingOpen(false)}
-        onUpgrade={() => {
-            updateSettings({ isPro: true });
-            setIsPricingOpen(false);
-        }}
+        isOpen={state.isPricingOpen}
+        onClose={actions.closePricing}
+        onUpgrade={actions.upgradeToPro}
       />
 
       <ExportModal 
-        isOpen={isExportOpen}
-        onClose={() => setIsExportOpen(false)}
-        onExport={handleExportData}
-        isExporting={isExporting}
+        isOpen={state.isExportOpen}
+        onClose={actions.closeExport}
+        onExport={actions.exportData}
+        isExporting={state.isExporting}
       />
 
-      {activeSession && (
+      {state.activeSession && (
         <ActiveFocus 
-          session={activeSession}
-          onEndSession={handleEndSession}
+          session={state.activeSession}
+          duration={state.activeSessionDuration}
+          onEndSession={actions.endSession}
         />
       )}
 
-      {completedSessionData && (
+      {/* Flow 4: Session Summary */}
+      {state.completedSessionData && (
         <SessionSummary 
-          sessionName={completedSessionData.name}
-          duration={completedSessionData.duration}
-          onClose={() => setCompletedSessionData(null)}
-          onViewAnalytics={() => {
-            setCompletedSessionData(null);
-            setCurrentView('analytics');
-          }}
+          sessionName={state.completedSessionData.name}
+          duration={state.completedSessionData.duration}
+          onClose={actions.closeSessionSummary}
+          onViewAnalytics={actions.viewAnalytics}
         />
       )}
     </div>
