@@ -60,6 +60,7 @@ export const generateMockStats = (): SessionStats[] => {
   return stats;
 };
 
+<<<<<<< HEAD
 // Storage keys
 const KEY_SESSIONS = 'csm_sessions';
 const KEY_SETTINGS = 'csm_settings';
@@ -88,6 +89,9 @@ export const storage = {
     localStorage.setItem(KEY_STATS, JSON.stringify(stats));
   }
 };
+=======
+// Storage logic has moved to store.ts to work with Zustand
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 
 export const formatDuration = (seconds: number): string => {
   const h = Math.floor(seconds / 3600);

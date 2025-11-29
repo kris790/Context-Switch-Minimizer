@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "canvas-confetti": "^1.9.4",
@@ -19,6 +20,17 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.1.1",
+=======
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.555.0",
+    "canvas-confetti": "^1.9.4",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

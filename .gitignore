@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+<<<<<<< HEAD
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
@@ -39,6 +40,9 @@ coverage/
 
 # Electron build artifacts
 release-builds/
+=======
+npm-debug.log*
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*

@@ -1,16 +1,28 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FocusSession, FocusState } from '../types';
 import { formatDuration, AVAILABLE_APPS } from '../utils';
+<<<<<<< HEAD
 import { StopCircle, AlertTriangle, ArrowRight, CheckCircle2, X, ShieldAlert, AlertCircle, Monitor } from 'lucide-react';
 
 interface ActiveFocusProps {
     session: FocusSession;
     duration: number;
     onEndSession: () => void;
+=======
+import { StopCircle, AlertTriangle, ArrowRight, CheckCircle2, X, ShieldAlert, AlertCircle, Monitor, Timer, Infinity, History, Edit3 } from 'lucide-react';
+
+interface ActiveFocusProps {
+  session: FocusSession;
+  onEndSession: (duration: number) => void;
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 }
 
 const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
   const [duration, setDuration] = useState(0);
+<<<<<<< HEAD
+=======
+  const [targetDuration, setTargetDuration] = useState<number | null>(null);
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
   const [focusState, setFocusState] = useState<FocusState>(FocusState.FOCUSING);
   const [distractionApp, setDistractionApp] = useState<{name: string, icon: string} | null>(null);
   const [dontAskAgain, setDontAskAgain] = useState(false);
@@ -30,19 +42,32 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
   }, []);
 
   const handleEndClick = () => {
+<<<<<<< HEAD
     // If session is less than 5 minutes (300 seconds), show confirmation
     if (duration < 300) {
       setShowEndConfirm(true);
     } else {
       onEndSession();
+=======
+    if (duration < 300) {
+      setShowEndConfirm(true);
+    } else {
+      onEndSession(durationRef.current);
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
     }
   };
 
   const confirmEnd = () => {
+<<<<<<< HEAD
     onEndSession();
   };
 
   // Simulate unexpected distraction for demo purposes
+=======
+    onEndSession(durationRef.current);
+  };
+
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
   const triggerDistraction = useCallback(() => {
     const unauthorizedApps = AVAILABLE_APPS.filter(app => !session.allowedAppIds.includes(app.id));
     if (unauthorizedApps.length > 0) {
@@ -64,9 +89,42 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
     setDontAskAgain(false);
   };
 
+<<<<<<< HEAD
   const allowedAppsList = AVAILABLE_APPS.filter(app => session.allowedAppIds.includes(app.id));
 
   // Timer formatter for the large display
+=======
+  const handleCustomDuration = () => {
+    const input = window.prompt("Enter duration in minutes:", "30");
+    if (input) {
+      const minutes = parseInt(input, 10);
+      if (!isNaN(minutes) && minutes > 0) {
+        setTargetDuration(minutes * 60);
+      }
+    }
+  };
+
+  const allowedAppsList = AVAILABLE_APPS.filter(app => session.allowedAppIds.includes(app.id));
+
+  // Timer Calculation Logic
+  let displaySeconds = duration;
+  let isOvertime = false;
+  let endsAtTime = null;
+
+  if (targetDuration !== null) {
+      const remaining = targetDuration - duration;
+      if (remaining < 0) {
+          displaySeconds = Math.abs(remaining);
+          isOvertime = true;
+      } else {
+          displaySeconds = remaining;
+          // Calculate End Time
+          const endTime = new Date(Date.now() + remaining * 1000);
+          endsAtTime = endTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      }
+  }
+
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
   const formatTimerLarge = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -80,16 +138,27 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
     return { main: `${mm}:${ss}`, sub: '' };
   };
 
+<<<<<<< HEAD
   const timerDisplay = formatTimerLarge(duration);
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col font-sans animate-fade-in">
       {/* Ambient Background */}
+=======
+  const timerDisplay = formatTimerLarge(displaySeconds);
+
+  // Calculate progress percentage for ring (if countdown)
+  const progressPercent = targetDuration ? Math.min((duration / targetDuration) * 100, 100) : 0;
+  
+  return (
+    <div className="fixed inset-0 bg-background z-50 flex flex-col font-sans animate-fade-in">
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
       <div className="absolute inset-0 bg-gradient-to-b from-primary-50 to-white">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-300/20 rounded-full blur-[120px] animate-pulse-slow"></div>
           <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-300/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
 
+<<<<<<< HEAD
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden z-10">
         <div className="text-center p-8 max-w-3xl w-full">
@@ -121,12 +190,100 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
                     className="group relative inline-flex items-center gap-3 px-12 py-5 bg-white border border-neutral-200 hover:border-danger-200 hover:bg-danger-50 text-neutral-600 hover:text-danger-600 rounded-2xl transition-all shadow-card hover:shadow-lg transform hover:-translate-y-1"
                 >
                     <StopCircle size={24} className="group-hover:scale-110 transition-transform" />
+=======
+      <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden z-10">
+        <div className="text-center p-8 max-w-3xl w-full flex flex-col items-center">
+            <div className="mb-6 inline-flex items-center justify-center w-24 h-24 bg-white/80 rounded-[2rem] shadow-float text-6xl border border-white backdrop-blur-md animate-bounce-soft">
+                {session.icon}
+            </div>
+            
+            <h1 className="text-3xl font-bold text-neutral-900 mb-2 tracking-tight">{session.name}</h1>
+            
+            <div className="flex items-center justify-center gap-2 text-primary-700 font-semibold mb-8 bg-primary-100/50 px-4 py-1.5 rounded-full w-fit mx-auto border border-primary-200 shadow-sm backdrop-blur-sm text-sm">
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-ping"></div>
+                <span>Focus Mode Active</span>
+            </div>
+
+            {/* Duration Selector */}
+            <div className="flex items-center justify-center gap-2 mb-10 bg-white/60 p-1.5 rounded-xl backdrop-blur-sm border border-white/60 shadow-sm transition-all hover:bg-white/80">
+                <button 
+                    onClick={() => setTargetDuration(null)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${!targetDuration ? 'bg-white text-primary-600 shadow-sm ring-1 ring-neutral-100' : 'text-neutral-500 hover:bg-white/50'}`}
+                >
+                    <Infinity size={16} />
+                    Flow
+                </button>
+                {[15, 25, 45, 60].map(mins => (
+                    <button
+                        key={mins}
+                        onClick={() => setTargetDuration(mins * 60)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${targetDuration === mins * 60 ? 'bg-white text-primary-600 shadow-sm ring-1 ring-neutral-100' : 'text-neutral-500 hover:bg-white/50'}`}
+                    >
+                        {mins}m
+                    </button>
+                ))}
+                <button 
+                    onClick={handleCustomDuration}
+                    className="px-3 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:bg-white/50 transition-colors"
+                    title="Custom Duration"
+                >
+                  <Edit3 size={16} />
+                </button>
+            </div>
+
+            <div className="relative mb-16 group cursor-default">
+              {/* Progress Ring for Countdown */}
+              {targetDuration && (
+                <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] -rotate-90 pointer-events-none transition-opacity duration-700">
+                    <circle cx="190" cy="190" r="180" className="stroke-neutral-100 fill-none" strokeWidth="2" />
+                    <circle 
+                        cx="190" cy="190" r="180" 
+                        className={`fill-none transition-all duration-1000 ease-linear ${isOvertime ? 'stroke-orange-400' : 'stroke-primary-200'}`}
+                        strokeWidth="4" 
+                        strokeDasharray={2 * Math.PI * 180}
+                        strokeDashoffset={isOvertime ? 0 : (2 * Math.PI * 180) - ((progressPercent / 100) * 2 * Math.PI * 180)}
+                        strokeLinecap="round"
+                    />
+                </svg>
+              )}
+
+              {/* Ends At Label */}
+              {targetDuration && !isOvertime && endsAtTime && (
+                <div className="absolute -top-6 left-0 w-full text-center text-primary-400 text-sm font-bold transition-opacity duration-300">
+                   Ends at {endsAtTime}
+                </div>
+              )}
+
+              <div className={`text-[120px] sm:text-[140px] font-mono font-bold tracking-tighter leading-none tabular-nums select-none drop-shadow-sm transition-all group-hover:scale-105 duration-500 ${isOvertime ? 'text-orange-500' : 'text-neutral-900'}`}>
+                  {isOvertime && <span className="text-4xl align-top font-bold mr-1 inline-block mt-8">+</span>}
+                  {timerDisplay.main}
+                  {timerDisplay.sub && <span className={`text-4xl sm:text-5xl ml-2 align-top opacity-60 font-medium inline-block mt-4 ${isOvertime ? 'text-orange-300' : 'text-neutral-400'}`}>{timerDisplay.sub}</span>}
+              </div>
+              
+              {targetDuration && (
+                  <div className={`absolute -bottom-8 left-0 w-full text-center text-sm font-bold uppercase tracking-widest transition-colors ${isOvertime ? 'text-orange-500 animate-pulse' : 'text-neutral-300'}`}>
+                      {isOvertime ? 'Overtime' : 'Remaining'}
+                  </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-center gap-6 w-full max-w-xs">
+                <button 
+                    onClick={handleEndClick}
+                    className="w-full group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white border border-neutral-200 hover:border-danger-200 hover:bg-danger-50 text-neutral-600 hover:text-danger-600 rounded-2xl transition-all shadow-card hover:shadow-lg transform hover:-translate-y-1"
+                >
+                    <StopCircle size={22} className="group-hover:scale-110 transition-transform" />
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
                     <span className="font-semibold text-lg">End Session</span>
                 </button>
                 
                 <button 
                     onClick={triggerDistraction}
+<<<<<<< HEAD
                     className="text-xs text-neutral-400 hover:text-neutral-600 font-medium transition-colors flex items-center gap-2 opacity-50 hover:opacity-100 px-4 py-2 rounded-lg hover:bg-neutral-100"
+=======
+                    className="text-xs text-neutral-400 hover:text-neutral-600 font-medium transition-colors flex items-center gap-2 opacity-60 hover:opacity-100 px-4 py-2 rounded-lg hover:bg-neutral-100"
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
                 >
                     <Monitor size={14} />
                     Simulate Distraction
@@ -134,12 +291,20 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
             </div>
         </div>
 
+<<<<<<< HEAD
         {/* Allowed Apps Footer */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
             <div className="glass shadow-float rounded-2xl p-2.5 px-8 flex items-center gap-8 animate-fade-in-up">
                 <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Allowed Workspace</span>
                 <div className="h-5 w-px bg-neutral-200"></div>
                 <div className="flex gap-4">
+=======
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4">
+            <div className="glass shadow-float rounded-2xl p-3 px-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-8 animate-fade-in-up">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest whitespace-nowrap">Allowed Workspace</span>
+                <div className="hidden sm:block h-5 w-px bg-neutral-200"></div>
+                <div className="flex gap-4 overflow-x-auto py-2 px-1 w-full sm:w-auto justify-center sm:justify-start">
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
                     {allowedAppsList.map(app => (
                         <div key={app.id} className="group relative" title={app.name}>
                             <div className="text-2xl transition-all opacity-70 group-hover:opacity-100 transform group-hover:scale-125 duration-200 cursor-default filter grayscale group-hover:grayscale-0">
@@ -152,7 +317,10 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* End Session Confirmation Modal */}
+=======
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
       {showEndConfirm && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-fade-in">
             <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-all" onClick={() => setShowEndConfirm(false)}></div>
@@ -182,6 +350,7 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
         </div>
       )}
 
+<<<<<<< HEAD
       {/* Gentle Redirect Overlay */}
       {focusState === FocusState.DISTRACTED && distractionApp && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
@@ -189,6 +358,12 @@ const ActiveFocus: React.FC<ActiveFocusProps> = ({ session, onEndSession }) => {
             <div className="absolute inset-0 bg-white/70 backdrop-blur-xl transition-all duration-500"></div>
             
             {/* Overlay Card */}
+=======
+      {focusState === FocusState.DISTRACTED && distractionApp && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
+            <div className="absolute inset-0 bg-white/70 backdrop-blur-xl transition-all duration-500"></div>
+            
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
             <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-12 border border-white/60 animate-zoom-in duration-300 ring-1 ring-black/5">
                 <div className="text-center">
                     <div className="w-28 h-28 bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-[2rem] flex items-center justify-center text-6xl mx-auto mb-8 shadow-inner border border-neutral-200">

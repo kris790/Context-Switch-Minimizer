@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { User, CreditCard, Bell, Shield, Smartphone, LogOut, Download, FileText } from 'lucide-react';
+<<<<<<< HEAD
 import { storage } from '../utils';
 
 interface SettingsProps {
     settings: UserSettings;
     onExportClick: () => void;
+=======
+import { useStore } from '../store';
+
+interface SettingsProps {
+  settings: UserSettings;
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 }
 
 const Settings: React.FC<SettingsProps> = ({ settings }) => {
   const [isExporting, setIsExporting] = useState(false);
+<<<<<<< HEAD
+=======
+  const sessions = useStore((state) => state.sessions);
+  const stats = useStore((state) => state.stats);
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 
   // Mock handlers for toggles
   const [strictMode, setStrictMode] = useState(false);
@@ -20,8 +32,11 @@ const Settings: React.FC<SettingsProps> = ({ settings }) => {
     
     // Simulate processing time
     setTimeout(() => {
+<<<<<<< HEAD
         const sessions = storage.getSessions();
         const stats = storage.getStats();
+=======
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
         const exportData = {
             user: settings,
             sessions,

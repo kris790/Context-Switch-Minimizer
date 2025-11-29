@@ -20,6 +20,7 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": [
+<<<<<<< HEAD
         "./src/*"
       ]
     },
@@ -41,4 +42,12 @@
       "path": "./tsconfig.node.json"
     }
   ]
+=======
+        "./*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 }

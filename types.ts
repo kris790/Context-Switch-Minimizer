@@ -8,6 +8,7 @@ export interface AppDefinition {
 export interface FocusSession {
   id: string;
   name: string;
+<<<<<<< HEAD
   allowedApps: Array<{
     appId: string;
     appName: string;
@@ -17,17 +18,29 @@ export interface FocusSession {
   lastUsedAt: string | null;
   totalTimeUsed: number;
   useCount: number;
+=======
+  allowedAppIds: string[];
+  totalTimeUsed: number; // in seconds
+  useCount: number;
+  lastUsedAt?: string;
+  icon: string;
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 }
 
 export interface SessionStats {
   date: string;
+<<<<<<< HEAD
   focusTime: number;
+=======
+  focusTime: number; // seconds
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
   switches: number;
 }
 
 export interface UserSettings {
   isOnboarded: boolean;
   isPro: boolean;
+<<<<<<< HEAD
   userId: string;
   createdAt: string;
   email?: string;
@@ -35,12 +48,20 @@ export interface UserSettings {
 }
 
 export type ViewState = 'dashboard' | 'analytics' | 'settings';
+=======
+  name: string;
+  dailyGoal: number; // minutes
+}
+
+export type ViewState = 'dashboard' | 'analytics' | 'settings' | 'active_session';
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
 
 export enum FocusState {
   IDLE = 'idle',
   FOCUSING = 'focusing',
   DISTRACTED = 'distracted', // Simulates the overlay trigger
 }
+<<<<<<< HEAD
 export interface AppState {
   currentView: ViewState;
   sessions: FocusSession[];
@@ -76,3 +97,5 @@ export type AppAction =
   | { type: 'DELETE_SESSION'; payload: string }
   | { type: 'ADD_SESSION'; payload: FocusSession }
   | { type: 'COMPLETE_ONBOARDING'; payload: { settings: UserSettings; initialSession?: FocusSession } };
+=======
+>>>>>>> 0b9186e9033b7601e5a254260bd8f1913179e0ad
